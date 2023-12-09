@@ -1,8 +1,20 @@
 ## Final Exam Preparation
 
-The problems below are similar to what you can expect for the final exam. 
+The problems below are similar to what you can expect for the final
+exam. Some problems are a bit more difficult than what you should
+expect in the exam. Also, I do not expect you to be able to solve all
+of these problems in the time allotted for the final exam. There will
+be fewer questions in the final exam, but the materials covered will
+be similar. Finally, the exam will again include a multiple choice
+problem that tests your general understanding of the concepts.
 
-### Higher-Order Functions
+As you will notice from the problems below, the final exam will focus
+on the materials covered in the second half of the semester. However,
+many concepts from the first half of the semester such as operational
+semantics, abstract syntax trees, etc. will of course still be highly
+relevant.
+
+### Problem 1: Higher-Order Functions
 
 1. Implement a Scala function
 
@@ -43,7 +55,7 @@ The problems below are similar to what you can expect for the final exam.
    
    Proceed as in part 1.
 
-### Type Inference and Type Checking
+### Problem 2: Type Inference and Type Checking
 
 For each of the programs below, answer the following questions:
 
@@ -91,7 +103,7 @@ Programs:
    }
    ```
 
-### Parameter Passing Modes
+### Problem 3: Parameter Passing Modes
 
 Consider the typed variant of JakartaScript that supports the
 different parameter passing modes we discussed. For each of the
@@ -127,7 +139,7 @@ why you obtain that specific value.
    f(y) + y
    ```
 
-### Subtyping
+### Problem 4: Subtyping
 
 1. Decide whether the following subtype relations hold
 
@@ -232,7 +244,7 @@ why you obtain that specific value.
       correct. Provide a program that shows how the incorrect choice
       would break the soundness of the type system.
             
-### State Monad
+### Problem 5: State Monad
 
 Consider the following function `fib` that computes the `n`-th Fibonacci
 number.
