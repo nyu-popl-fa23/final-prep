@@ -272,25 +272,25 @@ unnecessary recomputation. The following code implements this idea:
 ```scala
 type Cache = Map[Int, Int]
 
-def fib(n: Int) = fibMemo(n, Map.empty)._1
+def fib(n: Int) = fibMemo(Map.empty, n)._2
 
-def fibMemo(n: Int, m: Cache): (Int, Cache) =
+def fibMemo(m: Cache, n: Int): (Cache, Int) =
   if n <= 1 then (n, m) 
   else 
     m.get(n).map: 
       t => (t, m)
     .getOrElse:
-      val (r, mr) = fibMemo(n - 1, m)
-      val (s, ms) = fibMemo(n - 2, mr)
+      val (r, mr) = fibMemo(m, n - 1)
+      val (s, ms) = fibMemo(mr, n - 2)
       val t = r + s
-      (t, ms + (n -> t))
+      (ms + (n -> t), t)
 ```
 
 1. Complete the following variant of this implementation that uses a
    state monad to hide the threading of the memoization cache:
 
    ```scala
-   def fib(n: Int) = fibMemo(n)(Map.empty)._1
+   def fib(n: Int) = fibMemo(n)(Map.empty)._2
 
    def fibMemo(n: Int): State[Cache,Int] =
      if n <= 1 
