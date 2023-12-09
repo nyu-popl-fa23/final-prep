@@ -305,12 +305,13 @@ def fibMemo(n: Int, m: Cache): (Int, Cache) =
        yield t
    ```
    
-   **Disclaimer**: Arguably the monadic version of the function
-   `fibMemo` does not improve over the non-monadic version. Also,
-   there is a much more efficient way to compute the `fib` function
-   that does not rely on memoization (see part 2 of the exercise). The
-   sole purpose of this exercise is to practice writing monadic code
-   and understanding how it works.
+   **Disclaimer**: Arguably, unlike for our implementation of the
+   interpreter, the monadic version of the function `fibMemo` does not
+   improve over the non-monadic version in terms of code
+   clarity. Also, there is a much more efficient way to compute the
+   `fib` function that does not rely on memoization (see part 2 of the
+   exercise below). The sole purpose of this exercise is to practice
+   writing monadic code and understanding how it works.
 
 
 2. A simpler and even more efficient solution is to make the function
