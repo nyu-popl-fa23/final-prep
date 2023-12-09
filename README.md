@@ -1,12 +1,13 @@
 ## Final Exam Preparation
 
-The problems below are similar to what you can expect for the final
-exam. Some problems are a bit more difficult than what you should
-expect in the exam. Also, I do not expect you to be able to solve all
-of these problems in the time allotted for the final exam. There will
-be fewer questions in the final exam, but the materials covered will
-be similar. Finally, the exam will again include a multiple choice
-problem that tests your general understanding of the concepts.
+You can use the problems below to practice for the final exam. Some of
+the practice problems are a bit more difficult than what you will
+encounter in the exam. I do not expect you to be able to solve all of
+these practice problems in the time that is allotted for the final
+exam. There will be fewer questions in the exam, but the materials
+covered will be similar. Finally, the exam will again include a
+multiple choice problem that tests your general understanding of the
+concepts.
 
 As you will notice from the problems below, the final exam will focus
 on the materials covered in the second half of the semester. However,
