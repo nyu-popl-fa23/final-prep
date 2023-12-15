@@ -694,13 +694,13 @@ type Cache = Map[Int, Int]
 def fib(n: Int) = fibMemo(Map.empty, n)._2
 
 def fibMemo(m: Cache, n: Int): (Cache, Int) =
-  if n <= 1 then (n, m) 
+  if n <= 1 then (m, n) 
   else 
     m.get(n).map: 
-      t => (t, m)
+      t => (m, t)
     .getOrElse:
-      val (r, mr) = fibMemo(m, n - 1)
-      val (s, ms) = fibMemo(mr, n - 2)
+      val (mr, r) = fibMemo(m, n - 1)
+      val (ms, s) = fibMemo(mr, n - 2)
       val t = r + s
       (ms + (n -> t), t)
 ```
@@ -719,8 +719,8 @@ def fibMemo(m: Cache, n: Int): (Cache, Int) =
          t <- c.map(State.insert[Cache,Int]).getOrElse:
            for
              ???
+             _ <- State.write { m: Cache => ??? }
            yield ???
-         _ <- State.write { m: Cache => ??? }
        yield t
    ```
 
@@ -778,7 +778,7 @@ def fibMemo(m: Cache, n: Int): (Cache, Int) =
         else
           m.get(n).map( t => (m, t) ).getOrElse:
             val (mr, r) = fibMemo(n - 1)(m)
-            val (mr, s) = fibMemo(n - 2)(mr)
+            val (ms, s) = fibMemo(n - 2)(mr)
             val t = r + s
             (ms + (n -> t), t)
    ```
@@ -834,18 +834,19 @@ def fibMemo(m: Cache, n: Int): (Cache, Int) =
    `fibMemo(n - 1)`
 
    in the else branch. This call now returns a `State[Cache,Int]` which
-   hols a function of type `Cache => (Cache, Int)`. Let's refer to this
+   holds a function of type `Cache => (Cache, Int)`. Let's refer to this
    function as `f`. If we call `f` with the input cache state `m`, we get back
    the result values `(mr, r)`. Instead of calling `f` directly with `m`, we
    can first create a new function that takes an `m`, calls `f` with that `m`,
    then passes the resulting cache state `mr` to the function contained in
-   `fibMemo(n - 2)` to obtain `(ms, s)` from which we then compute `(ms, r + s)`:
+   `fibMemo(n - 2)` to obtain `(ms, s)`. From this we then compute the result value `t = r + s` and the updated cache `ms + (n -> t)`:
 
    ```scala 
    m: Mem =>
-     val (r, mr) = f(m)
-     val (s, ms) = fibMemo(n - 2)(mr)
-     (r + s, ms)
+     val (mr, r) = fibMemo(n - 1)(m) // calls the function f described above with m
+     val (ms, s) = fibMemo(n - 2)(mr)
+     val t = s + t
+     (ms + (n -> t), t)
    ```
    
    Note that this function is again of type `Cache => (Cache, Int)`. Let's
@@ -854,13 +855,14 @@ def fibMemo(m: Cache, n: Int): (Cache, Int) =
    We can then express `g` like this:
 
    ```scala
-   fibMemo(n - 1).flatMap( r => fibMemo(n - 2).map( s => r + s ) )`
+   fibMemo(n - 1).flatMap( r => fibMemo(n - 2).map( s => r + s ).flatMap( t => State.write( ms => ms + (n -> t) ).map(_ => t) )`
    ```
    
    `fibMemo(n - 1)` gives us a state monad that contains the function
    `f`. The subsequent `flatMap` and `map` operations compose `f` with
-   the second `fibMemo` call and the final addition operation to obtain
-   a state monad that contains the function `g`. If we now call the
+   the second `fibMemo` call, add up the result values `r` and `s`,
+   and update the cache `ms` with the new entry `n -> t`. The
+   resulting state monad contains the function `g`. If we now call the
    apply method of that state monad with an input cache state `m`, we
    get back the value `r + s` and the memory state `ms`.
 
@@ -871,18 +873,22 @@ def fibMemo(m: Cache, n: Int): (Cache, Int) =
    for
      r <- fibMemo(n - 1)
      s <- fibMemo(n - 2)
-   yield r + s
+     t = r + s
+     _ <- State.write( ms => ms + (n -> t) )
+   yield t
    ```
    
    This expression gives us again a state monad that contains the
    function `g` just like the explicit `flatMap` and `map` calls.
 
    Now the else branch in the monadic version of the `fibMemo` function
-   is complicated by the actual cache look up, which we can implement
-   using `State.read`, and the final update of the cache, which we can
-   implement using `State.write`. Though, it again uses `flatMap` and `map`
+   is complicated by the actual cache lookup, which we can implement
+   using `State.read`. Though, it again uses `flatMap` and `map`
    operations (hidden in `for` expressions) to compose these operations
-   with the state monad that computes the function `g` above:
+   with the state monad that computes the function `g` above.
+   
+   In particular, 
+   
 
    ```scala
    def fibMemo(n: Int): State[Cache,Int] = 
@@ -895,8 +901,9 @@ def fibMemo(m: Cache, n: Int): (Cache, Int) =
                 for
                   r <- fibMemo(n - 1)
                   s <- fibMemo(n - 2)
-                yield r + s
-         _ <- State.write(m: Cache => m + (n -> t))
+                  t = r + s
+                  _ <- State.write(m: Cache => m + (n -> t))
+                yield t
        yield t
    ```
    
@@ -930,7 +937,7 @@ def fibMemo(m: Cache, n: Int): (Cache, Int) =
 
    If `c` is `None`, the above expression evaluates to `None`, so the
    subsequent call to `getOrElse` evaluates to the argument passed to
-   `getOrElse`, i.e. a function that recursively computes `fib(n)`,
+   `getOrElse`, i.e. the function `g` that recursively computes `fib(n)`,
    wrapped in a state monad.
 
    The actual `fib` function is then obtained from `fibMemo` by
