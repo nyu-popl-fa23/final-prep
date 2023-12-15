@@ -855,7 +855,7 @@ def fibMemo(m: Cache, n: Int): (Cache, Int) =
    We can then express `g` like this:
 
    ```scala
-   fibMemo(n - 1).flatMap( r => fibMemo(n - 2).map( s => r + s ).flatMap( t => State.write( ms => ms + (n -> t) ).map(_ => t) )`
+   fibMemo(n - 1).flatMap( r => fibMemo(n - 2).map( s => r + s ).flatMap( t => State.write( ms => ms + (n -> t) ).map(_ => t) ))
    ```
    
    `fibMemo(n - 1)` gives us a state monad that contains the function
