@@ -38,12 +38,12 @@ relevant.
        <p>
       
        ```scala
-       // non-tail recursive version
+       // tail-recursive version with short-circuiting
        def dropWhile[A](p: A => Boolean)(l: List[A]): List[A] = l match
          case Nil => Nil
          case hd :: tl => if p(hd) then dropWhile(tl) else hd :: tl
          
-       // tail-recursive version
+       // tail-recursive version w/o short-circuiting
        def dropWhile[A](p: A => Boolean)(l: List[A]): List[A] =
          /* invariant maintained by dw(lp, acc): 
             there exists a list lpp such that 
